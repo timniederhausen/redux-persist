@@ -6,12 +6,12 @@ declare module "redux-persist/es/types" {
     rehydrated: boolean;
   }
 
-  type PersistedState = {
-    _persist: PersistState;
-  } | undefined;
+  type PersistedState<S> = {
+    _persist?: PersistState;
+  } & S;
 
-  type PersistMigrate =
-    (state: PersistedState, currentVersion: number) => Promise<PersistedState>;
+  type PersistMigrate<S> =
+    (state: S & PersistedState<S>, currentVersion: number) => Promise<PersistedState<S>>;
 
   type StateReconciler<S> =
     (inboundState: any, state: S, reducedState: S, config: PersistConfig<S>) => S;
@@ -35,12 +35,12 @@ declare module "redux-persist/es/types" {
     whitelist?: Array<keyof S>;
     transforms?: Array<Transform<HSS, ESS, S, RS>>;
     throttle?: number;
-    migrate?: PersistMigrate;
+    migrate?: PersistMigrate<S>;
     stateReconciler?: false | StateReconciler<S>;
     /**
      * @desc Used for migrations.
      */
-    getStoredState?: (config: PersistConfig<S, RS, HSS, ESS>) => Promise<PersistedState>;
+    getStoredState?: (config: PersistConfig<S, RS, HSS, ESS>) => Promise<PersistedState<S>>;
     debug?: boolean;
     serialize?: boolean | ((data: any) => any);
     deserialize?: boolean | ((serialized: any) => any);
@@ -73,8 +73,9 @@ declare module "redux-persist/es/types" {
     removeItem(key: string): Promise<void>;
   }
 
-  interface MigrationManifest {
-    [key: string]: (state: PersistedState) => PersistedState;
+  interface MigrationManifest<S extends {} = {}> {
+    // TODO: should we use PersistedState here?
+    [key: string]: (state: S) => S;
   }
 
   /**
