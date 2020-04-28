@@ -1,10 +1,6 @@
 declare module "redux-persist/es/persistReducer" {
-  import { Action, Reducer } from "redux";
-  import { PersistState, PersistConfig } from "redux-persist/es/types";
-
-  interface PersistPartial {
-    _persist?: PersistState;
-  }
+  import { Action, AnyAction, Reducer } from "redux";
+  import { PersistConfig, PersistedState } from "redux-persist/es/types";
 
   /**
    * @desc It provides a way of combining the reducers, replacing redux's @see combineReducers
@@ -12,7 +8,7 @@ declare module "redux-persist/es/persistReducer" {
    * @param baseReducer reducer used to persist the state
    */
   // tslint:disable-next-line: strict-export-declare-modifiers
-  export default function persistReducer<S, A extends Action = Action>(config: PersistConfig<S>, baseReducer: Reducer<S, A>): Reducer<S & PersistPartial, A>;
+  export default function persistReducer<S, A extends Action = AnyAction>(config: PersistConfig<S>, baseReducer: Reducer<S, A>): Reducer<PersistedState<S>, A>;
 }
 
 declare module "redux-persist/lib/persistReducer" {
